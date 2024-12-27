@@ -54,7 +54,12 @@ export default function SearchInput() {
       try {
         await navigator.clipboard.writeText(selectedPrompt)
         setCopySuccess(true)
-        setTimeout(() => setCopySuccess(false), 2000) // 2秒后隐藏提示
+        // 清空搜索框和结果列表
+        setQuery('')
+        setResults([])
+        setActiveIndex(-1)
+        // 2秒后隐藏提示
+        setTimeout(() => setCopySuccess(false), 2000)
       } catch (err) {
         console.error('复制失败:', err)
       }

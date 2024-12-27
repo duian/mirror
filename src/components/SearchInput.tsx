@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, KeyboardEvent } from 'react'
 
 interface SearchResult {
   id: string
@@ -16,6 +16,7 @@ const mockData: SearchResult[] = [
 export default function SearchInput() {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<SearchResult[]>([])
+  const [activeIndex, setActiveIndex] = useState(-1)
 
   useEffect(() => {
     if (!query.trim()) {
@@ -29,7 +30,24 @@ export default function SearchInput() {
       item.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()))
     )
     setResults(filtered)
+    setActiveIndex(-1) // 重置选中项
   }, [query])
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (!results.length) return
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault() // 防止光标移动
+      setActiveIndex(prevIndex => 
+        prevIndex >= results.length - 1 ? 0 : prevIndex + 1
+      )
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      setActiveIndex(prevIndex => 
+        prevIndex <= 0 ? results.length - 1 : prevIndex - 1
+      )
+    }
+  }
 
   return (
     <div className="relative">
@@ -38,6 +56,7 @@ export default function SearchInput() {
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={handleKeyDown}
           className="w-full px-4 py-3 text-lg rounded-lg border-0 bg-white shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-500"
           placeholder="搜索文档或标签..."
           autoFocus
@@ -46,10 +65,14 @@ export default function SearchInput() {
 
       {results.length > 0 && (
         <div className="absolute w-full mt-2 bg-white rounded-lg shadow-lg border border-gray-200 max-h-96 overflow-y-auto">
-          {results.map((result) => (
+          {results.map((result, index) => (
             <div
               key={result.id}
-              className="p-4 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+              className={`p-4 cursor-pointer border-b border-gray-100 last:border-b-0 ${
+                index === activeIndex 
+                  ? 'bg-indigo-50 hover:bg-indigo-50' 
+                  : 'hover:bg-gray-50'
+              }`}
             >
               <div className="font-medium text-gray-900">{result.title}</div>
               <div className="mt-1 flex gap-2">

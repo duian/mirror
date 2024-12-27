@@ -4,12 +4,13 @@ interface SearchResult {
   id: string
   title: string
   tags: string[]
+  prompt: string
 }
 
 // 示例数据，实际应该从您的数据源获取
 const mockData: SearchResult[] = [
-  { id: '1', title: '示例文档1', tags: ['文档', '教程'] },
-  { id: '2', title: '示例文档2', tags: ['笔记', '教程'] },
+  { id: '1', title: '示例文档1', tags: ['文档', '教程'], prompt: '示例文档1的prompt' },
+  { id: '2', title: '示例文档2', tags: ['笔记', '教程'], prompt: '示例文档2的prompt' },
   // ... 更多数据
 ]
 
@@ -17,6 +18,7 @@ export default function SearchInput() {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<SearchResult[]>([])
   const [activeIndex, setActiveIndex] = useState(-1)
+  const [copySuccess, setCopySuccess] = useState(false)
 
   useEffect(() => {
     if (!query.trim()) {
@@ -33,7 +35,7 @@ export default function SearchInput() {
     setActiveIndex(-1) // 重置选中项
   }, [query])
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = async (e: KeyboardEvent<HTMLInputElement>) => {
     if (!results.length) return
 
     if (e.key === 'ArrowDown') {
@@ -46,6 +48,16 @@ export default function SearchInput() {
       setActiveIndex(prevIndex => 
         prevIndex <= 0 ? results.length - 1 : prevIndex - 1
       )
+    } else if (e.key === 'Enter' && activeIndex !== -1) {
+      e.preventDefault()
+      const selectedPrompt = results[activeIndex].prompt
+      try {
+        await navigator.clipboard.writeText(selectedPrompt)
+        setCopySuccess(true)
+        setTimeout(() => setCopySuccess(false), 2000) // 2秒后隐藏提示
+      } catch (err) {
+        console.error('复制失败:', err)
+      }
     }
   }
 
@@ -61,6 +73,11 @@ export default function SearchInput() {
           placeholder="搜索文档或标签..."
           autoFocus
         />
+        {copySuccess && (
+          <div className="absolute right-0 top-0 mt-3 mr-3 text-sm text-green-600">
+            已复制到剪贴板
+          </div>
+        )}
       </div>
 
       {results.length > 0 && (

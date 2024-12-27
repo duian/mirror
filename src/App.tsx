@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import './globals.css'
-import Navbar from './components/Navbar'
+import SearchInput from './components/SearchInput'
 import Settings from './components/Settings'
 import { Dialog } from '@headlessui/react'
 
@@ -9,7 +9,6 @@ function App() {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      // 检测 Cmd + , 组合键
       if (event.metaKey && event.key === ',') {
         event.preventDefault()
         setIsSettingsOpen(true)
@@ -22,12 +21,9 @@ function App() {
 
   return (
     <>
-      <Navbar />
       <main className="min-h-screen bg-gray-100 p-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h1>Hello World</h1>
-          </div>
+        <div className="max-w-3xl mx-auto pt-8">
+          <SearchInput />
         </div>
       </main>
 

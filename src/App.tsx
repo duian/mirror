@@ -6,13 +6,14 @@ import { useEffect, useRef } from 'react'
 
 function App() {
   const isDraggingRef = useRef(false)
-  const initialMousePosRef = useRef({ x: 0, y: 0 })
-  const appWindow = getCurrentWindow();
+  const windowRef = useRef<Awaited<ReturnType<typeof getCurrentWindow>>>()
 
   useEffect(() => {
-    const handleMouseDown = (e: MouseEvent) => {
+    // 初始化时获取窗口实例
+    windowRef.current = getCurrentWindow()
+
+    const handleMouseDown = () => {
       isDraggingRef.current = true
-      initialMousePosRef.current = { x: e.clientX, y: e.clientY }
     }
 
     const handleMouseUp = () => {
@@ -20,26 +21,19 @@ function App() {
     }
 
     const handleMouseMove = async (e: MouseEvent) => {
-      if (!isDraggingRef.current) return
-
-      const deltaX = e.clientX - initialMousePosRef.current.x
-      const deltaY = e.clientY - initialMousePosRef.current.y
-
-      // 获取当前窗口位置
-      const position = await appWindow.innerPosition()
+      if (!isDraggingRef.current || !windowRef.current) return
       
-      // 使用 requestAnimationFrame 优化性能
-      requestAnimationFrame(() => {
-        appWindow.setPosition(new PhysicalPosition(
-          position.x + deltaX,
-          position.y + deltaY
-        ))
-      })
+      // 直接使用鼠标移动事件的 movementX 和 movementY
+      const deltaX = e.movementX
+      const deltaY = e.movementY
 
-      initialMousePosRef.current = { x: e.clientX, y: e.clientY }
+      const position = await windowRef.current.innerPosition()
+      await windowRef.current.setPosition(new PhysicalPosition(
+        position.x + deltaX,
+        position.y + deltaY
+      ))
     }
 
-    // 添加事件监听器
     document.addEventListener('mousedown', handleMouseDown)
     document.addEventListener('mouseup', handleMouseUp)
     document.addEventListener('mousemove', handleMouseMove)

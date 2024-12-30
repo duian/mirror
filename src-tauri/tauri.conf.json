@@ -10,13 +10,15 @@
     "frontendDist": "../dist"
   },
   "app": {
+    "macOSPrivateApi": true,
     "windows": [
       {
         "title": "mirror-app",
         "width": 700,
         "height": 600,
         "decorations": false,
-        "transparent": true
+        "transparent": false, 
+        "resizable": false
       }
     ],
     "security": {

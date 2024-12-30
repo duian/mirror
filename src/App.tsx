@@ -4,7 +4,7 @@ import SearchInput from './components/SearchInput'
 function App() {
   return (
     <main className="min-h-screen bg-transparent">
-      <div className="mx-auto pt-8 px-4">
+      <div className="mx-auto pt-2 px-4">
         <div className="flex items-center gap-1.5">
           <div className="w-[640px]">
             <SearchInput />

@@ -11,8 +11,8 @@ interface SearchResult {
 const mockData: SearchResult[] = [
   {
     id: "1",
-    title: "示例文档1",
-    tags: ["文档", "教程"],
+    title: "generate commit message",
+    tags: ["git", "commit", "tool", "work"],
     prompt: `Now, please generate a commit message with Chinese.
 Make sure it includes an accurate and informative subject line that succinctly summarizes the key points of the changes, the response must only have commit message content and must have blank line in message template.
 

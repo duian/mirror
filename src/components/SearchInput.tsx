@@ -1,4 +1,4 @@
-import { useState, useEffect, KeyboardEvent } from "react";
+import { useState, useEffect, KeyboardEvent, useRef, useImperativeHandle, forwardRef } from "react";
 
 interface SearchResult {
   id: string;
@@ -56,7 +56,22 @@ Further paragraphs come after blank lines.
   // ... 更多数据
 ];
 
-export default function SearchInput() {
+// 添加组件 ref 类型定义
+export interface SearchInputRef {
+  focus: () => void;
+}
+
+// 修改组件定义为 forwardRef
+const SearchInput = forwardRef<SearchInputRef, {}>((props, ref) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  
+  // 暴露 focus 方法给父组件
+  useImperativeHandle(ref, () => ({
+    focus: () => {
+      inputRef.current?.focus();
+    }
+  }));
+
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -113,6 +128,7 @@ export default function SearchInput() {
     <div className="relative">
       <div className="relative">
         <input
+          ref={inputRef}
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -156,4 +172,6 @@ export default function SearchInput() {
       )}
     </div>
   );
-}
+});
+
+export default SearchInput;

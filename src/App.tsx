@@ -1,5 +1,5 @@
 import './globals.css'
-import SearchInput from './components/SearchInput'
+import SearchInput, { SearchInputRef } from './components/SearchInput'
 import { getCurrentWindow, PhysicalPosition } from '@tauri-apps/api/window'
 import { useEffect, useRef } from 'react'
 import { register, unregister } from '@tauri-apps/plugin-global-shortcut';
@@ -9,6 +9,7 @@ import { configService } from './services/configService'
 function App() {
   const isDraggingRef = useRef(false)
   const windowRef = useRef<Awaited<ReturnType<typeof getCurrentWindow>>>()
+  const searchInputRef = useRef<SearchInputRef>(null);
 
   useEffect(() => {
     // 初始化时获取窗口实例和配置
@@ -28,6 +29,7 @@ function App() {
             } else {
               await window.show()
               await window.setFocus()
+              searchInputRef.current?.focus();
             }
           }
         })
@@ -79,7 +81,7 @@ function App() {
       <div className="mx-auto pt-2 px-4">
         <div className="flex items-center gap-1.5">
           <div className="w-[640px]">
-            <SearchInput />
+            <SearchInput ref={searchInputRef} />
           </div>
           <img 
             src="/mirror-logo.png" 

@@ -124,6 +124,22 @@ const SearchInput = forwardRef<SearchInputRef, {}>((props, ref) => {
     }
   };
 
+  // 添加处理点击的函数
+  const handleResultClick = async (result: SearchResult) => {
+    try {
+      await navigator.clipboard.writeText(result.prompt);
+      setCopySuccess(true);
+      // 清空搜索框和结果列表
+      setQuery("");
+      setResults([]);
+      setActiveIndex(-1);
+      // 2秒后隐藏提示
+      setTimeout(() => setCopySuccess(false), 2000);
+    } catch (err) {
+      console.error("复制失败:", err);
+    }
+  };
+
   return (
     <div className="relative">
       <div className="relative">
@@ -154,6 +170,7 @@ const SearchInput = forwardRef<SearchInputRef, {}>((props, ref) => {
                   ? "bg-indigo-50 hover:bg-indigo-50"
                   : "hover:bg-gray-50"
               }`}
+              onClick={() => handleResultClick(result)}
             >
               <div className="font-medium text-gray-900">{result.title}</div>
               <div className="mt-1 flex gap-2">

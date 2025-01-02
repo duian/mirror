@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "mirror-app",
+  "productName": "mirror",
   "version": "0.1.0",
-  "identifier": "com.mirror-app.app",
+  "identifier": "com.mirror.app",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
@@ -13,7 +13,7 @@
     "macOSPrivateApi": true,
     "windows": [
       {
-        "title": "mirror-app",
+        "title": "mirror",
         "width": 700,
         "height": 600,
         "decorations": false,

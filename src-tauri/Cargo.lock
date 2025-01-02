@@ -2079,7 +2079,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "mirror-app"
+name = "mirror"
 version = "0.1.0"
 dependencies = [
  "serde",

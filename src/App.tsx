@@ -17,17 +17,18 @@ function App() {
       const config = configService.getConfig()
       
       // 注册全局快捷键
-      console.log('init1', +new Date())
       try {
-        await register(config.shortcut.toggleApp, async () => {
-          console.log('toggleApp');
-          const window = await getCurrentWindow()
-          const isVisible = await window.isVisible()
-          if (isVisible) {
-            await window.hide()
-          } else {
-            await window.show()
-            await window.setFocus()
+        await register(config.shortcut.toggleApp, async (event) => {
+          if (event.state === 'Pressed') {
+            console.log('toggleApp');
+            const window = await getCurrentWindow()
+            const isVisible = await window.isVisible()
+            if (isVisible) {
+              await window.hide()
+            } else {
+              await window.show()
+              await window.setFocus()
+            }
           }
         })
       } catch (err) {

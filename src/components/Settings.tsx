@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import type { AppConfig } from '../types/config'
-import { defaultConfig } from '../types/config'
+// import { defaultConfig } from '../types/config'
 import { configService } from '../services/configService'
 
 export default function Settings() {

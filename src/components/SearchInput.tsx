@@ -62,7 +62,7 @@ export interface SearchInputRef {
 }
 
 // 修改组件定义为 forwardRef
-const SearchInput = forwardRef<SearchInputRef, {}>((props, ref) => {
+const SearchInput = forwardRef<SearchInputRef, {}>((_, ref) => {
   const inputRef = useRef<HTMLInputElement>(null);
   
   // 暴露 focus 方法给父组件

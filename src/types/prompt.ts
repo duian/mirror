@@ -1,3 +1,5 @@
+import svgMasterContent from '../prompts/svg-master.md?raw'
+
 export interface Prompt {
   id?: string;
   title: string;
@@ -49,10 +51,10 @@ const defaultPrompt: Prompt[] = [
   },
   {
     id: "2",
-    title: "示例文档2",
-    tags: ["笔记", "教程"],
-    intro: "示例文档2的prompt",
-    content: "示例文档2的prompt"
+    title: "svg master",
+    tags: ["svg", "绘图"],
+    intro: "根据你的 prompt， 生成 svg 代码",
+    content: svgMasterContent,
   }
 ];
 

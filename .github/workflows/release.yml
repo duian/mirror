@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - develop
 
 # This is the example from the readme.
 # On each push to the `release` branch it will create or update a GitHub release, build your app, and upload the artifacts to the release.
@@ -33,6 +34,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
+          cache: "pnpm"
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable

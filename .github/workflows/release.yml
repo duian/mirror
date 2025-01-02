@@ -62,3 +62,8 @@ jobs:
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
+
+      - name: Upload artifacts
+        uses: actions/upload-pages-artifact@v3
+        with:
+          name: "mirror"

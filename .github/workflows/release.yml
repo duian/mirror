@@ -3,7 +3,6 @@ name: "Publish"
 on:
   push:
     branches:
-      - develop
       - main
 
 # This is the example from the readme.
@@ -62,3 +61,8 @@ jobs:
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
+      - name: Upload artifacts
+        uses: actions/upload-pages-artifact@v4
+        with:
+          name: "mirror"
+          path: "target/release/bundle"

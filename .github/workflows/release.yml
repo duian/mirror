@@ -62,7 +62,7 @@ jobs:
           prerelease: false
           args: ${{ matrix.args }}
       - name: Upload artifacts
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v2
         with:
           name: "mirror"
           path: "target/release/bundle"

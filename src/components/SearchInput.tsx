@@ -9,16 +9,24 @@ const localData: Prompt[] = defaultPrompt;
 // 添加组件 ref 类型定义
 export interface SearchInputRef {
   focus: () => void;
+  getValue: () => string;
+  clear: () => void;
 }
 
 // 修改组件定义为 forwardRef
 const SearchInput = forwardRef<SearchInputRef, {}>((_, ref) => {
   const inputRef = useRef<HTMLInputElement>(null);
   
-  // 暴露 focus 方法给父组件
+  // 修改 useImperativeHandle，暴露新的方法
   useImperativeHandle(ref, () => ({
     focus: () => {
       inputRef.current?.focus();
+    },
+    getValue: () => query,
+    clear: () => {
+      setQuery("");
+      setResults([]);
+      setActiveIndex(-1);
     }
   }));
 

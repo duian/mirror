@@ -68,11 +68,17 @@ function App() {
     document.addEventListener('mouseup', handleMouseUp)
     document.addEventListener('mousemove', handleMouseMove)
 
-    // 添加全局 ESC 键处理
+    // 修改全局 ESC 键处理
     const handleKeyDown = async (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        const window = await getCurrentWindow();
-        await window.hide();
+        // 如果搜索框有内容，先清除内容
+        if (searchInputRef.current?.getValue()) {
+          searchInputRef.current?.clear();
+        } else {
+          // 搜索框为空时才隐藏窗口
+          const window = await getCurrentWindow();
+          await window.hide();
+        }
       }
     };
 

@@ -66,6 +66,17 @@ function App() {
     document.addEventListener('mouseup', handleMouseUp)
     document.addEventListener('mousemove', handleMouseMove)
 
+    // 添加全局 ESC 键处理
+    const handleKeyDown = async (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        const window = await getCurrentWindow();
+        await window.hide();
+      }
+    };
+
+    // 添加全局键盘事件监听
+    document.addEventListener('keydown', handleKeyDown);
+
     return () => {
       document.removeEventListener('mousedown', handleMouseDown)
       document.removeEventListener('mouseup', handleMouseUp)
@@ -73,6 +84,7 @@ function App() {
       // 清理快捷键
       const config = configService.getConfig()
       unregister(config.shortcut.toggleApp).catch(console.error)
+      document.removeEventListener('keydown', handleKeyDown);
     }
   }, [])
 

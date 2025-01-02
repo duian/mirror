@@ -74,11 +74,9 @@ function App() {
         // 如果搜索框有内容，先清除内容
         if (searchInputRef.current?.getValue()) {
           searchInputRef.current?.clear();
-        } else {
-          // 搜索框为空时才隐藏窗口
-          const window = await getCurrentWindow();
-          await window.hide();
-        }
+        }           // 搜索框为空时才隐藏窗口
+        const window = await getCurrentWindow();
+        await window.hide();
       }
     };
 

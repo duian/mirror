@@ -15,13 +15,15 @@ function App() {
     // 初始化时获取窗口实例和配置
     const init = async () => {
       windowRef.current = await getCurrentWindow()
+      // 初始化时隐藏窗口
+      await windowRef.current.hide()
+      
       const config = configService.getConfig()
       
       // 注册全局快捷键
       try {
         await register(config.shortcut.toggleApp, async (event) => {
           if (event.state === 'Pressed') {
-            console.log('toggleApp');
             const window = await getCurrentWindow()
             const isVisible = await window.isVisible()
             if (isVisible) {

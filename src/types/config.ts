@@ -8,7 +8,7 @@ export interface AppConfig {
 
 export const defaultConfig: AppConfig = {
   shortcut: {
-    toggleApp: 'cmd+,',  // 默认快捷键
+    toggleApp: 'CommandOrControl+Shift+C',  // 默认快捷键
   },
   language: 'zh',
   autoUpdate: true,

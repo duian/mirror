@@ -2,6 +2,8 @@ import './globals.css'
 import SearchInput from './components/SearchInput'
 import { getCurrentWindow, PhysicalPosition } from '@tauri-apps/api/window'
 import { useEffect, useRef } from 'react'
+import { register, unregister } from '@tauri-apps/plugin-global-shortcut';
+import { configService } from './services/configService'
 
 
 function App() {
@@ -9,8 +11,31 @@ function App() {
   const windowRef = useRef<Awaited<ReturnType<typeof getCurrentWindow>>>()
 
   useEffect(() => {
-    // 初始化时获取窗口实例
-    windowRef.current = getCurrentWindow()
+    // 初始化时获取窗口实例和配置
+    const init = async () => {
+      windowRef.current = await getCurrentWindow()
+      const config = configService.getConfig()
+      
+      // 注册全局快捷键
+      console.log('init1', +new Date())
+      try {
+        await register(config.shortcut.toggleApp, async () => {
+          console.log('toggleApp');
+          const window = await getCurrentWindow()
+          const isVisible = await window.isVisible()
+          if (isVisible) {
+            await window.hide()
+          } else {
+            await window.show()
+            await window.setFocus()
+          }
+        })
+      } catch (err) {
+        console.error('快捷键注册失败:', err)
+      }
+    }
+    
+    init()
 
     const handleMouseDown = () => {
       isDraggingRef.current = true
@@ -42,6 +67,9 @@ function App() {
       document.removeEventListener('mousedown', handleMouseDown)
       document.removeEventListener('mouseup', handleMouseUp)
       document.removeEventListener('mousemove', handleMouseMove)
+      // 清理快捷键
+      const config = configService.getConfig()
+      unregister(config.shortcut.toggleApp).catch(console.error)
     }
   }, [])
 

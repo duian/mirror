@@ -1,60 +1,10 @@
 import { useState, useEffect, KeyboardEvent, useRef, useImperativeHandle, forwardRef } from "react";
+import defaultPrompt, { type Prompt } from "../types/prompt";
 
-interface SearchResult {
-  id: string;
-  title: string;
-  tags: string[];
-  prompt: string;
-}
+interface SearchResult extends Prompt {}
 
 // 示例数据，实际应该从您的数据源获取
-const mockData: SearchResult[] = [
-  {
-    id: "1",
-    title: "generate commit message",
-    tags: ["git", "commit", "tool", "work"],
-    prompt: `Now, please generate a commit message with Chinese.
-Make sure it includes an accurate and informative subject line that succinctly summarizes the key points of the changes, the response must only have commit message content and must have blank line in message template.
-
-Below is the commit message template:
-
-<type>(<scope>): <subject>
-// blank line
-<body>
-// blank line
-<footer>
-
-The Header is mandatory, while the Body and Footer are optional.
-
-Regardless of which part, no line should exceed 72 characters (or 100 characters). This is to avoid automatic line breaks affecting aesthetics.
-
-Below is the type Enum:
-
-- feat: new feature
-- fix: bug fix
-- docs: documentation
-- style: formatting (changes that do not affect code execution)
-- refactor: refactoring (code changes that are neither new features nor bug fixes)
-- test: adding tests
-- chore: changes to the build process or auxiliary tools
-
-The body section is a detailed description of this commit and can be split into multiple lines. Here's an example:
-
-More detailed explanatory text, if necessary. Wrap it to about 72 characters or so. 
-
-Further paragraphs come after blank lines.
-
-- Bullet points are okay, too
-- Use a hanging indent`
-  },
-  {
-    id: "2",
-    title: "示例文档2",
-    tags: ["笔记", "教程"],
-    prompt: "示例文档2的prompt"
-  }
-  // ... 更多数据
-];
+const localData: Prompt[] = defaultPrompt;
 
 // 添加组件 ref 类型定义
 export interface SearchInputRef {
@@ -84,7 +34,7 @@ const SearchInput = forwardRef<SearchInputRef, {}>((_, ref) => {
     }
 
     // 搜索逻辑
-    const filtered = mockData.filter(
+    const filtered = localData.filter(
       (item) =>
         item.title.toLowerCase().includes(query.toLowerCase()) ||
         item.tags.some((tag) => tag.toLowerCase().includes(query.toLowerCase()))
@@ -108,7 +58,7 @@ const SearchInput = forwardRef<SearchInputRef, {}>((_, ref) => {
       );
     } else if (e.key === "Enter" && activeIndex !== -1) {
       e.preventDefault();
-      const selectedPrompt = results[activeIndex].prompt;
+      const selectedPrompt = results[activeIndex].content;
       try {
         await navigator.clipboard.writeText(selectedPrompt);
         setCopySuccess(true);
@@ -127,7 +77,7 @@ const SearchInput = forwardRef<SearchInputRef, {}>((_, ref) => {
   // 添加处理点击的函数
   const handleResultClick = async (result: SearchResult) => {
     try {
-      await navigator.clipboard.writeText(result.prompt);
+      await navigator.clipboard.writeText(result.content);
       setCopySuccess(true);
       // 清空搜索框和结果列表
       setQuery("");
@@ -190,5 +140,30 @@ const SearchInput = forwardRef<SearchInputRef, {}>((_, ref) => {
     </div>
   );
 });
+
+export async function search(keyword: string): Promise<SearchResult[]> {
+  // 1. 先从本地数据搜索
+  const localResults = localData.filter(item => 
+    item.title.toLowerCase().includes(keyword.toLowerCase()) ||
+    item.tags.some(tag => tag.toLowerCase().includes(keyword.toLowerCase()))
+  );
+
+  // 2. 如果本地有结果，直接返回
+  if (localResults.length > 0) {
+    return localResults;
+  }
+
+  // 3. 本地没有结果，请求服务端
+  try {
+    const response = await fetch(`/api/search?keyword=${encodeURIComponent(keyword)}`);
+    if (!response.ok) {
+      throw new Error('Search request failed');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Search error:', error);
+    return [];
+  }
+}
 
 export default SearchInput;
